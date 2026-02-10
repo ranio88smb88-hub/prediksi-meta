@@ -8,8 +8,7 @@ import {
   calculateTogelWin, 
   calculateBolaWin,
   TOGEL_PASARAN_LIST,
-  SHIO_LIST,
-  getImlekShio
+  SHIO_LIST
 } from './services/generators';
 import MetaballsBackground from './components/MetaballsBackground';
 
@@ -109,10 +108,10 @@ const App: React.FC = () => {
                 <span className="text-emerald-500 text-[7px] animate-pulse">ADMIN_ACTIVE</span>
               </label>
               <div className="grid grid-cols-2 gap-2">
-                {Object.values(ScriptType).map((t) => (
+                {Object.values(ScriptType).map((t: string) => (
                   <button 
                     key={t} 
-                    onClick={() => { setScriptType(t); setOutput(''); setInput(''); }} 
+                    onClick={() => { setScriptType(t as ScriptType); setOutput(''); setInput(''); }} 
                     className={`p-3 border rounded-lg transition-all text-[9px] font-bold ${scriptType === t ? 'bg-white text-black border-white' : 'bg-white/5 border-white/10 text-white/50 hover:bg-white/10'}`}
                   >
                     {t}
@@ -127,7 +126,7 @@ const App: React.FC = () => {
                   <div className="space-y-1">
                     <label className="text-[7px] text-white/30 ml-1">1. Pilih Market</label>
                     <div className="grid grid-cols-2 gap-2">
-                      {["4D", "5D"].map(m => (
+                      {["4D", "5D"].map((m: string) => (
                         <button key={m} onClick={() => setCalcMarket(m as any)} className={`p-2 rounded border text-[9px] ${calcMarket === m ? 'bg-white text-black' : 'border-white/10 text-white/40'}`}>{m} MARKET</button>
                       ))}
                     </div>
@@ -136,13 +135,13 @@ const App: React.FC = () => {
                     <div className="space-y-1">
                       <label className="text-[7px] text-white/30 ml-1">2. Jenis Taruhan</label>
                       <select value={calcCategory} onChange={(e) => setCalcCategory(e.target.value)} className="w-full bg-black border border-white/10 p-2 rounded-lg text-white text-[9px]">
-                        {categories.map(c => <option key={c} value={c}>{c.replace(/_/g, ' ')}</option>)}
+                        {categories.map((c: string) => <option key={c} value={c}>{c.replace(/_/g, ' ')}</option>)}
                       </select>
                     </div>
                     <div className="space-y-1">
                       <label className="text-[7px] text-white/30 ml-1">3. Tipe Hadiah</label>
                       <select value={calcType} onChange={(e) => setCalcType(e.target.value)} className="w-full bg-black border border-white/10 p-2 rounded-lg text-white text-[9px]">
-                        {rewardTypes.map(r => <option key={r} value={r}>{r.replace(/_/g, ' ')}</option>)}
+                        {rewardTypes.map((r: string) => <option key={r} value={r}>{r.replace(/_/g, ' ')}</option>)}
                       </select>
                     </div>
                   </div>
@@ -235,7 +234,7 @@ const App: React.FC = () => {
                     <div className="space-y-2">
                       <label className="text-[7px] text-white/30 ml-1">Quick Pasaran Matrix</label>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 h-52 overflow-y-auto custom-scrollbar bg-black/40 p-3 rounded-xl border border-white/5">
-                        {TOGEL_PASARAN_LIST.map(p => (
+                        {TOGEL_PASARAN_LIST.map((p: string) => (
                           <button 
                             key={p} 
                             onClick={() => handleQuickTogel(p)} 
@@ -254,7 +253,7 @@ const App: React.FC = () => {
                     <div className="space-y-2">
                       <label className="text-[7px] text-white/30 ml-1">Zodiac Shio Matrix</label>
                       <div className="grid grid-cols-4 gap-2 p-3 rounded-xl border border-white/5 bg-black/40">
-                        {SHIO_LIST.map(s => (
+                        {SHIO_LIST.map((s: any) => (
                           <button 
                             key={s.name} 
                             onClick={() => handleQuickSyair(s.name)} 
