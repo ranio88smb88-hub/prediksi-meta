@@ -88,20 +88,20 @@
 <script type="importmap">
 {
   "imports": {
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "three": "https://esm.sh/three@^0.182.0",
-    "react/": "https://esm.sh/react@^19.2.4/",
     "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "three": "https://esm.sh/three@^0.182.0",
+    "tweakpane": "https://esm.sh/tweakpane@^4.0.5",
     "vite": "https://esm.sh/vite@^7.3.1",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4",
-    "tweakpane": "https://esm.sh/tweakpane@^4.0.5"
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4"
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
 </head>
 <body>
     <div id="root"></div>
+    <!-- Vite akan mencari file ini di root dan melakukan bundling otomatis -->
     <script type="module" src="/index.tsx"></script>
 </body>
 </html>
