@@ -19,20 +19,17 @@ const App: React.FC = () => {
   const [activePasaran, setActivePasaran] = useState<string>('');
   const [activeShio, setActiveShio] = useState<string>('');
   
-  // Togel Calculator States
   const [calcMarket, setCalcMarket] = useState<"4D" | "5D">("4D");
   const [calcCategory, setCalcCategory] = useState<string>("4D");
   const [calcType, setCalcType] = useState<string>("FULL");
   const [calcStake, setCalcStake] = useState<number>(1000);
 
-  // Bola Calculator States
   const [bolaMarket, setBolaMarket] = useState<string>("HDP");
   const [bolaHdp, setBolaHdp] = useState<number>(0);
   const [bolaOdds, setBolaOdds] = useState<number>(1.90);
   const [bolaStake, setBolaStake] = useState<number>(100000);
-  const [bolaSimResult, setBolaSimResult] = useState<number>(1); // GD or Total Goals
+  const [bolaSimResult, setBolaSimResult] = useState<number>(1);
 
-  // Bukti JP States
   const [jpUserId, setJpUserId] = useState<string>('');
   const [jpAmount, setJpAmount] = useState<string>('');
   const [jpGame, setJpGame] = useState<string>('');
@@ -188,7 +185,6 @@ const App: React.FC = () => {
                         <input type="range" min="-5" max="5" step="1" value={bolaSimResult} onChange={(e) => setBolaSimResult(Number(e.target.value))} className="flex-1 accent-white" />
                         <span className="w-12 text-center text-[12px] font-bold bg-white text-black rounded">{bolaSimResult > 0 ? '+' + bolaSimResult : bolaSimResult}</span>
                       </div>
-                      <p className="text-[6px] text-white/20 mt-1">*Ubah slider untuk melihat hasil menang/kalah di Processed Output</p>
                     </div>
                  </div>
               </div>
@@ -202,7 +198,7 @@ const App: React.FC = () => {
                         value={jpUserId} 
                         onChange={(e) => setJpUserId(e.target.value)} 
                         placeholder="Usyyyyyy" 
-                        className="w-full bg-black border border-white/10 p-3 rounded-lg text-white text-[11px] outline-none focus:border-white/40"
+                        className="w-full bg-black border border-white/10 p-3 rounded-lg text-white text-[11px] outline-none"
                       />
                    </div>
                    <div className="space-y-1">
@@ -212,7 +208,7 @@ const App: React.FC = () => {
                         value={jpAmount} 
                         onChange={(e) => setJpAmount(e.target.value)} 
                         placeholder="75,000,000" 
-                        className="w-full bg-black border border-white/10 p-3 rounded-lg text-white text-[11px] outline-none focus:border-white/40"
+                        className="w-full bg-black border border-white/10 p-3 rounded-lg text-white text-[11px] outline-none"
                       />
                    </div>
                    <div className="space-y-1">
@@ -221,14 +217,13 @@ const App: React.FC = () => {
                         type="text" 
                         value={jpGame} 
                         onChange={(e) => setJpGame(e.target.value)} 
-                        placeholder="Sweet Bonanza Provider PRAGMATIC PLAY" 
-                        className="w-full bg-black border border-white/10 p-3 rounded-lg text-white text-[11px] outline-none focus:border-white/40"
+                        placeholder="Sweet Bonanza" 
+                        className="w-full bg-black border border-white/10 p-3 rounded-lg text-white text-[11px] outline-none"
                       />
                    </div>
                 </div>
               </div>
             ) : (
-              // Generator Views (Quick Togel/Syair)
               <div className="space-y-4 animate-fade-in">
                  {scriptType === ScriptType.TOGEL && (
                     <div className="space-y-2">
@@ -240,8 +235,8 @@ const App: React.FC = () => {
                             onClick={() => handleQuickTogel(p)} 
                             className={`text-[8px] p-2.5 rounded-md border transition-all duration-200 truncate font-bold
                               ${activePasaran === p 
-                                ? 'bg-white text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.3)]' 
-                                : 'bg-white/5 border-white/5 text-white/40 hover:bg-white/10 hover:text-white hover:border-white/20'}`}
+                                ? 'bg-white text-black border-white' 
+                                : 'bg-white/5 border-white/5 text-white/40 hover:bg-white/10'}`}
                           >
                             {p}
                           </button>
@@ -253,14 +248,14 @@ const App: React.FC = () => {
                     <div className="space-y-2">
                       <label className="text-[7px] text-white/30 ml-1">Zodiac Shio Matrix</label>
                       <div className="grid grid-cols-4 gap-2 p-3 rounded-xl border border-white/5 bg-black/40">
-                        {SHIO_LIST.map((s: any) => (
+                        {SHIO_LIST.map((s: { name: string; emoji: string }) => (
                           <button 
                             key={s.name} 
                             onClick={() => handleQuickSyair(s.name)} 
                             className={`flex flex-col items-center p-2 rounded-lg border transition-all duration-200
                               ${activeShio === s.name 
-                                ? 'bg-white text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.3)]' 
-                                : 'bg-white/5 border-white/5 text-white/40 hover:bg-white/10 hover:text-white hover:border-white/20'}`}
+                                ? 'bg-white text-black border-white' 
+                                : 'bg-white/5 border-white/5 text-white/40 hover:bg-white/10'}`}
                           >
                             <span className="text-xl mb-1">{s.emoji}</span>
                             <span className="text-[6px] font-black">{s.name}</span>
@@ -274,27 +269,27 @@ const App: React.FC = () => {
                     <textarea 
                       value={input} 
                       onChange={(e) => setInput(e.target.value)} 
-                      placeholder="AWAITING SYSTEM INPUT OR SELECTION..." 
-                      className="w-full h-32 bg-black/40 border border-white/10 rounded-2xl p-5 text-[9px] resize-none outline-none focus:border-white/30 transition-colors custom-scrollbar" 
+                      placeholder="AWAITING SYSTEM INPUT..." 
+                      className="w-full h-32 bg-black/40 border border-white/10 rounded-2xl p-5 text-[9px] resize-none outline-none custom-scrollbar" 
                     />
                  </div>
               </div>
             )}
 
-            <button onClick={handleGenerate} className="w-full bg-white text-black font-black py-5 rounded-2xl hover:bg-emerald-400 active:scale-[0.98] transition-all text-[11px] tracking-[0.5em] shadow-xl shadow-white/5 group">
-              GENERATE_OUTPUT <span className="group-hover:translate-x-1 inline-block transition-transform">→</span>
+            <button onClick={handleGenerate} className="w-full bg-white text-black font-black py-5 rounded-2xl hover:bg-emerald-400 active:scale-[0.98] transition-all text-[11px] tracking-[0.5em]">
+              GENERATE_OUTPUT →
             </button>
           </div>
 
           <div className="w-full md:w-[55%] p-8 flex flex-col space-y-4 bg-white/[0.01]">
             <div className="flex justify-between items-center text-white/30 text-[8px]">
-              <span>Processed Transmuted Output</span>
+              <span>Processed Output</span>
               {copied && <span className="text-emerald-400 font-bold animate-pulse">CLIPBOARD_SYNCED</span>}
             </div>
             <textarea 
               value={output} 
               readOnly 
-              className="flex-1 bg-black/50 border border-white/10 rounded-3xl p-6 font-mono text-[9px] text-white/80 resize-none custom-scrollbar leading-relaxed outline-none" 
+              className="flex-1 bg-black/50 border border-white/10 rounded-3xl p-6 font-mono text-[9px] text-white/80 resize-none custom-scrollbar outline-none" 
             />
             <button 
               onClick={() => { navigator.clipboard.writeText(output); setCopied(true); setTimeout(() => setCopied(false), 2000); }} 
@@ -308,7 +303,7 @@ const App: React.FC = () => {
       </main>
 
       <footer className="fixed bottom-4 w-full text-center text-white/10 text-[7px] pointer-events-none uppercase">
-        Nexus Protocol v2.5.0 // Advanced Sports & Togel Analytics System
+        Nexus Protocol v2.5.0 // Analytics System
       </footer>
 
       <style>{`
