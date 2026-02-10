@@ -13,34 +13,18 @@ const MetaballsBackground: React.FC = () => {
     let clock: THREE.Clock;
     let targetMousePosition = new THREE.Vector2(0.5, 0.5);
     let mousePosition = new THREE.Vector2(0.5, 0.5);
-    let currentMovementScale = 1.0;
 
     const devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
 
     const settings = {
       fixedTopLeftRadius: 0.80,
       fixedBottomRightRadius: 0.90,
-      smallTopLeftRadius: 0.30,
-      smallBottomRightRadius: 0.35,
       movingCount: 6,
       blendSmoothness: 0.80,
-      mouseProximityEffect: true,
-      minMovementScale: 0.30,
-      maxMovementScale: 1.00,
       mouseSmoothness: 0.10,
       cursorRadiusMin: 0.14,
       cursorRadiusMax: 0.15,
       animationSpeed: 0.6,
-      movementScale: 1.2,
-      ambientIntensity: 0.12,
-      diffuseIntensity: 1.20,
-      specularIntensity: 2.50,
-      specularPower: 3.0,
-      fresnelPower: 0.8,
-      contrast: 1.6,
-      cursorGlowIntensity: 1.2,
-      cursorGlowRadius: 2.2,
-      fogDensity: 0.06,
       sphereColor: new THREE.Color(0x050510),
       lightColor: new THREE.Color(0xccaaff),
       cursorGlowColor: new THREE.Color(0xaa77ff)
@@ -71,20 +55,8 @@ const MetaballsBackground: React.FC = () => {
           uSphereCount: { value: settings.movingCount },
           uFixedTopLeftRadius: { value: settings.fixedTopLeftRadius },
           uFixedBottomRightRadius: { value: settings.fixedBottomRightRadius },
-          uSmallTopLeftRadius: { value: settings.smallTopLeftRadius },
-          uSmallBottomRightRadius: { value: settings.smallBottomRightRadius },
           uBlendSmoothness: { value: settings.blendSmoothness },
-          uAmbientIntensity: { value: settings.ambientIntensity },
-          uDiffuseIntensity: { value: settings.diffuseIntensity },
-          uSpecularIntensity: { value: settings.specularIntensity },
-          uSpecularPower: { value: settings.specularPower },
-          uFresnelPower: { value: settings.fresnelPower },
-          uContrast: { value: settings.contrast },
-          uFogDensity: { value: settings.fogDensity },
           uAnimationSpeed: { value: settings.animationSpeed },
-          uMovementScale: { value: settings.movementScale },
-          uCursorGlowIntensity: { value: settings.cursorGlowIntensity },
-          uCursorGlowRadius: { value: settings.cursorGlowRadius },
           uSphereColor: { value: settings.sphereColor },
           uLightColor: { value: settings.lightColor },
           uCursorGlowColor: { value: settings.cursorGlowColor }
@@ -105,18 +77,8 @@ const MetaballsBackground: React.FC = () => {
           uniform int uSphereCount;
           uniform float uFixedTopLeftRadius;
           uniform float uFixedBottomRightRadius;
-          uniform float uSmallTopLeftRadius;
-          uniform float uSmallBottomRightRadius;
           uniform float uBlendSmoothness;
-          uniform float uDiffuseIntensity;
-          uniform float uSpecularIntensity;
-          uniform float uSpecularPower;
-          uniform float uFresnelPower;
-          uniform float uContrast;
           uniform float uAnimationSpeed;
-          uniform float uMovementScale;
-          uniform float uCursorGlowIntensity;
-          uniform float uCursorGlowRadius;
           uniform vec3 uSphereColor;
           uniform vec3 uLightColor;
           uniform vec3 uCursorGlowColor;
@@ -142,23 +104,17 @@ const MetaballsBackground: React.FC = () => {
             float result = 100.0;
             float t = uTime * uAnimationSpeed;
 
-            vec3 topLeftPos = screenToWorld(vec2(0.08 + sin(t*0.2)*0.05, 0.92 + cos(t*0.3)*0.05));
+            vec3 topLeftPos = screenToWorld(vec2(0.08, 0.92));
             float topLeft = sdSphere(pos - topLeftPos, uFixedTopLeftRadius);
             
-            vec3 smallTopLeftPos = screenToWorld(vec2(0.25 + cos(t*0.4)*0.1, 0.72 + sin(t*0.2)*0.1));
-            float smallTopLeft = sdSphere(pos - smallTopLeftPos, uSmallTopLeftRadius);
-            
-            vec3 bottomRightPos = screenToWorld(vec2(0.92 + sin(t*0.25)*0.05, 0.08 + cos(t*0.35)*0.05));
+            vec3 bottomRightPos = screenToWorld(vec2(0.92, 0.08));
             float bottomRight = sdSphere(pos - bottomRightPos, uFixedBottomRightRadius);
-            
-            vec3 smallBottomRightPos = screenToWorld(vec2(0.72 + cos(t*0.3)*0.1, 0.25 + sin(t*0.4)*0.1));
-            float smallBottomRight = sdSphere(pos - smallBottomRightPos, uSmallBottomRightRadius);
             
             for (int i = 0; i < 15; i++) {
               if (i >= uSphereCount) break;
               float fi = float(i);
               float speed = 0.3 + fi * 0.1;
-              float orbitRadius = (1.0 + mod(fi, 3.0) * 0.4) * uMovementScale;
+              float orbitRadius = 1.2 + mod(fi, 3.0) * 0.4;
               float phase = fi * PI * 0.5;
               
               vec3 offset = vec3(
@@ -173,7 +129,7 @@ const MetaballsBackground: React.FC = () => {
             
             vec3 mouseWorld = screenToWorld(uMousePosition);
             float cursorBall = sdSphere(pos - mouseWorld, uCursorRadius);
-            float corners = smin(smin(topLeft, smallTopLeft, 0.6), smin(bottomRight, smallBottomRight, 0.6), 0.6);
+            float corners = smin(topLeft, bottomRight, 0.6);
             
             result = smin(result, corners, uBlendSmoothness);
             result = smin(result, cursorBall, 0.2); 
@@ -202,29 +158,23 @@ const MetaballsBackground: React.FC = () => {
                 t += d;
             }
             
-            vec3 finalColor = vec3(0.0);
-            float distToMouse = length(screenUv - uMousePosition);
-            float glow = pow(1.0 - smoothstep(0.0, uCursorGlowRadius, distToMouse), 2.5) * uCursorGlowIntensity;
-            
             if(t < 6.0) {
                 vec3 p = ro + rd*t;
                 vec3 n = calcNormal(p);
                 vec3 viewDir = -rd;
-                vec3 lightPos = vec3(1.0, 1.0, 2.0);
-                vec3 lightDir = normalize(lightPos);
+                vec3 lightDir = normalize(vec3(1.0, 1.0, 2.0));
                 
                 float diff = max(dot(n, lightDir), 0.0);
-                float spec = pow(max(dot(viewDir, reflect(-lightDir, n)), 0.0), uSpecularPower);
-                float fresnel = pow(1.0 - max(dot(viewDir, n), 0.0), uFresnelPower);
+                float spec = pow(max(dot(viewDir, reflect(-lightDir, n)), 0.0), 32.0);
                 
-                vec3 color = uSphereColor + diff * uLightColor * uDiffuseIntensity;
-                color += uLightColor * spec * uSpecularIntensity * fresnel;
-                color += uLightColor * fresnel * 0.4;
+                vec3 color = uSphereColor + diff * uLightColor;
+                color += uLightColor * spec;
                 
-                gl_FragColor = vec4(color * uContrast, 1.0);
+                gl_FragColor = vec4(color, 1.0);
             } else {
-                finalColor = uCursorGlowColor * glow;
-                gl_FragColor = vec4(finalColor, glow * 0.7);
+                float distToMouse = length(screenUv - uMousePosition);
+                float glow = pow(1.0 - smoothstep(0.0, 2.0, distToMouse), 2.5);
+                gl_FragColor = vec4(uCursorGlowColor * glow, glow * 0.7);
             }
           }
         `,
@@ -234,16 +184,14 @@ const MetaballsBackground: React.FC = () => {
       const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
       scene.add(mesh);
 
-      // Cast Pane as any to ignore strict Vercel build checks for addFolder
+      // Cast as any to avoid strict Tweakpane 4 'addFolder' property check during build
       const pane = new Pane({ title: "Nexus Control Protocol", expanded: false }) as any;
       
       const mbFolder = pane.addFolder({ title: "Metaballs", expanded: true });
       mbFolder.addBinding(settings, "fixedTopLeftRadius", { min: 0.1, max: 1.5 }).on('change', (v: any) => material.uniforms.uFixedTopLeftRadius.value = v.value);
       mbFolder.addBinding(settings, "fixedBottomRightRadius", { min: 0.1, max: 1.5 }).on('change', (v: any) => material.uniforms.uFixedBottomRightRadius.value = v.value);
       mbFolder.addBinding(settings, "movingCount", { min: 0, max: 15, step: 1 }).on('change', (v: any) => material.uniforms.uSphereCount.value = v.value);
-
-      const animFolder = pane.addFolder({ title: "Animation" });
-      animFolder.addBinding(settings, "animationSpeed", { min: 0.1, max: 2.0 }).on('change', (v: any) => material.uniforms.uAnimationSpeed.value = v.value);
+      mbFolder.addBinding(settings, "animationSpeed", { min: 0.1, max: 2.0 }).on('change', (v: any) => material.uniforms.uAnimationSpeed.value = v.value);
     };
 
     const animate = () => {
