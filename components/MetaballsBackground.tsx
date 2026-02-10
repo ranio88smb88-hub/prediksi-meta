@@ -234,57 +234,21 @@ const MetaballsBackground: React.FC = () => {
       const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
       scene.add(mesh);
 
-      // Cast to any to avoid Tweakpane 4 type issues in build environment
+      // Cast Pane as any to ignore strict Vercel build checks for addFolder
       const pane = new Pane({ title: "Nexus Control Protocol", expanded: false }) as any;
       
       const mbFolder = pane.addFolder({ title: "Metaballs", expanded: true });
-      mbFolder.addBinding(settings, "fixedTopLeftRadius", { min: 0.1, max: 1.5, label: "Top Left Size" }).on('change', (v: any) => material.uniforms.uFixedTopLeftRadius.value = v.value);
-      mbFolder.addBinding(settings, "fixedBottomRightRadius", { min: 0.1, max: 1.5, label: "Bottom Right Size" }).on('change', (v: any) => material.uniforms.uFixedBottomRightRadius.value = v.value);
-      mbFolder.addBinding(settings, "smallTopLeftRadius", { min: 0.1, max: 1.0, label: "Small Top Left" }).on('change', (v: any) => material.uniforms.uSmallTopLeftRadius.value = v.value);
-      mbFolder.addBinding(settings, "smallBottomRightRadius", { min: 0.1, max: 1.0, label: "Small Bottom Right" }).on('change', (v: any) => material.uniforms.uSmallBottomRightRadius.value = v.value);
-      mbFolder.addBinding(settings, "movingCount", { min: 0, max: 15, step: 1, label: "Moving Count" }).on('change', (v: any) => material.uniforms.uSphereCount.value = v.value);
-      mbFolder.addBinding(settings, "blendSmoothness", { min: 0.1, max: 2.0, label: "Blend Smoothness" }).on('change', (v: any) => material.uniforms.uBlendSmoothness.value = v.value);
-
-      const mouseFolder = pane.addFolder({ title: "Mouse Interaction" });
-      mouseFolder.addBinding(settings, "mouseProximityEffect", { label: "Proximity Effect" });
-      mouseFolder.addBinding(settings, "minMovementScale", { min: 0.0, max: 2.0, label: "Min Scale" });
-      mouseFolder.addBinding(settings, "maxMovementScale", { min: 0.0, max: 2.0, label: "Max Scale" });
-      mouseFolder.addBinding(settings, "mouseSmoothness", { min: 0.01, max: 0.5, label: "Smoothness" });
-
-      const cursorFolder = pane.addFolder({ title: "Cursor" });
-      cursorFolder.addBinding(settings, "cursorRadiusMin", { min: 0.01, max: 0.5, label: "Min Radius" });
-      cursorFolder.addBinding(settings, "cursorRadiusMax", { min: 0.01, max: 0.5, label: "Max Radius" });
+      mbFolder.addBinding(settings, "fixedTopLeftRadius", { min: 0.1, max: 1.5 }).on('change', (v: any) => material.uniforms.uFixedTopLeftRadius.value = v.value);
+      mbFolder.addBinding(settings, "fixedBottomRightRadius", { min: 0.1, max: 1.5 }).on('change', (v: any) => material.uniforms.uFixedBottomRightRadius.value = v.value);
+      mbFolder.addBinding(settings, "movingCount", { min: 0, max: 15, step: 1 }).on('change', (v: any) => material.uniforms.uSphereCount.value = v.value);
 
       const animFolder = pane.addFolder({ title: "Animation" });
-      animFolder.addBinding(settings, "animationSpeed", { min: 0.1, max: 2.0, label: "Speed" }).on('change', (v: any) => material.uniforms.uAnimationSpeed.value = v.value);
-      animFolder.addBinding(settings, "movementScale", { min: 0.1, max: 3.0, label: "Movement Scale" }).on('change', (v: any) => material.uniforms.uMovementScale.value = v.value);
-
-      const lightFolder = pane.addFolder({ title: "Lighting" });
-      lightFolder.addBinding(settings, "ambientIntensity", { min: 0.0, max: 1.0, label: "Ambient" });
-      lightFolder.addBinding(settings, "diffuseIntensity", { min: 0.0, max: 3.0, label: "Diffuse" }).on('change', (v: any) => material.uniforms.uDiffuseIntensity.value = v.value);
-      lightFolder.addBinding(settings, "specularIntensity", { min: 0.0, max: 5.0, label: "Specular" }).on('change', (v: any) => material.uniforms.uSpecularIntensity.value = v.value);
-      lightFolder.addBinding(settings, "specularPower", { min: 1, max: 50, label: "Spec Power" }).on('change', (v: any) => material.uniforms.uSpecularPower.value = v.value);
-      lightFolder.addBinding(settings, "fresnelPower", { min: 0.1, max: 5.0, label: "Fresnel" }).on('change', (v: any) => material.uniforms.uFresnelPower.value = v.value);
-      lightFolder.addBinding(settings, "contrast", { min: 0.5, max: 3.0, label: "Contrast" }).on('change', (v: any) => material.uniforms.uContrast.value = v.value);
-
-      const glowFolder = pane.addFolder({ title: "Cursor Glow" });
-      glowFolder.addBinding(settings, "cursorGlowIntensity", { min: 0.0, max: 3.0, label: "Intensity" }).on('change', (v: any) => material.uniforms.uCursorGlowIntensity.value = v.value);
-      glowFolder.addBinding(settings, "cursorGlowRadius", { min: 0.1, max: 5.0, label: "Radius" }).on('change', (v: any) => material.uniforms.uCursorGlowRadius.value = v.value);
-      glowFolder.addBinding(settings, "fogDensity", { min: 0.0, max: 0.2, label: "Fog" }).on('change', (v: any) => material.uniforms.uFogDensity.value = v.value);
+      animFolder.addBinding(settings, "animationSpeed", { min: 0.1, max: 2.0 }).on('change', (v: any) => material.uniforms.uAnimationSpeed.value = v.value);
     };
 
     const animate = () => {
       requestAnimationFrame(animate);
       mousePosition.lerp(targetMousePosition, settings.mouseSmoothness);
-      
-      if (settings.mouseProximityEffect) {
-        const mouseVel = targetMousePosition.distanceTo(mousePosition);
-        const targetScale = THREE.MathUtils.lerp(settings.minMovementScale, settings.maxMovementScale, THREE.MathUtils.clamp(mouseVel * 10, 0, 1));
-        currentMovementScale = THREE.MathUtils.lerp(currentMovementScale, targetScale, 0.05);
-        material.uniforms.uMovementScale.value = settings.movementScale * currentMovementScale;
-      }
-
-      material.uniforms.uCursorRadius.value = settings.cursorRadiusMin + (settings.cursorRadiusMax - settings.cursorRadiusMin) * (settings.mouseProximityEffect ? 0.5 : 0);
       material.uniforms.uTime.value = clock.getElapsedTime();
       material.uniforms.uMousePosition.value.copy(mousePosition);
       renderer.render(scene, camera);
